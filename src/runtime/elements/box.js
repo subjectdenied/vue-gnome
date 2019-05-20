@@ -1,6 +1,5 @@
-import libui from 'libui-node'
-
 import { Widget } from './widget'
+import Gtk from '../gtk';
 
 export class Box extends Widget {
   _getDefaultAttributes() {
@@ -12,31 +11,29 @@ export class Box extends Widget {
   }
 
   _createWidget() {
-    if ( this.attributes.horizontal )
-      this.widget = new libui.UiHorizontalBox();
-    else
-      this.widget = new libui.UiVerticalBox();
+    this.widget = new Gtk.Box()
+    this.widget.show()
   }
 
   _appendWidget( childNode ) {
-    this.widget.append( childNode.widget, childNode.attributes.stretchy );
+    this.widget.add(childNode.widget);
   }
 
   _removeWidget( childNode ) {
-    this.widget.deleteAt( childNode.widgetIndex );
+    this.widget.remove(childNode);
   }
 
   _initializeWidgetAttributes() {
     super._initializeWidgetAttributes();
-
-    if ( this.attributes.padded )
-      this.widget.padded = true;
   }
 
   _setWidgetAttribute( key, value ) {
-    if ( key == 'padded' )
-      this.widget.padded = value;
-    else
-      super._setWidgetAttribute( key, value );
+    switch (key) {
+      case 'padded':
+        this.widget.padded = value
+        break
+      default:
+        super._setWidgetAttribute( key, value );
+    }
   }
 }

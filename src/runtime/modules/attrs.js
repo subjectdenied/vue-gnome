@@ -2,6 +2,7 @@ import { extend } from 'shared/util'
 import { isBooleanAttr } from '../../util'
 
 function updateAttrs( oldVnode, vnode ) {
+  console.log('updateAttr called')
   if ( oldVnode.data.attrs == null && vnode.data.attrs == null )
     return;
 

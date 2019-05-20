@@ -1,4 +1,4 @@
-import libui from 'libui-node'
+import Gtk from '../gtk';
 
 import { Element } from './element'
 import { Widget } from './widget';
@@ -34,6 +34,7 @@ export class Window extends Element {
   }
 
   setAttribute( key, value ) {
+    console.log('window.setAttribute', key, value)
     super.setAttribute( key, value );
 
     if ( this.window != null )
@@ -56,38 +57,52 @@ export class Window extends Element {
 
   _getDefaultAttributes() {
     return {
-      title: 'Vuido',
       width: 400,
       height: 300,
+      resizeable: true,
+      title: ''
+    /*
       menu: false,
       margined: false,
       fullscreen: false,
       borderless: false
+    */
     };
   }
 
   _mountWindow() {
-    this.window = new libui.UiWindow( this.attributes.title, this.attributes.width, this.attributes.height, this.attributes.menu );
+    this.window = new Gtk.Window({
+      type : Gtk.WindowType.TOPLEVEL
+    })
 
+    this.window.setDefaultSize(600, 400)
+
+    if (this.attributes.title) {
+      this.window.setTitle(this.attributes.title)
+    }
+    /*
     if ( this.attributes.margined )
       this.window.margined = true;
     if ( this.attributes.fullscreen )
       this.window.fullscreen = true;
     if ( this.attributes.borderless )
       this.window.borderless = true;
+    */
 
     for ( let key in this.handlers )
       this._setWindowHandler( key, this.handlers[ key ] );
 
     if ( this.childNodes.length > 0 ) {
       this.childNodes[ 0 ]._mountWidget();
-      this.window.setChild( this.childNodes[ 0 ].widget );
+      this.window.add( this.childNodes[ 0 ].widget );
     }
 
     if ( this.showHandler != null )
       this.showHandler();
 
-    this.window.show();
+    this.window.showAll();
+    //this.window.show()
+    Gtk.main()
   }
 
   _destroyWindow() {
@@ -102,36 +117,45 @@ export class Window extends Element {
   }
 
   _setWindowAttribute( key, value ) {
-    if ( key == 'title' ) {
-      if ( value == null )
-        value = '';
-      this.window.title = value;
-    } else if ( key == 'width' ) {
-      if ( this.window.contentSize.w != value )
-        this.window.contentSize = new libui.Size( value, this.window.contentSize.h );
-    } else if ( key == 'height' ) {
-      if ( this.window.contentSize.h != value )
-        this.window.contentSize = new libui.Size( this.window.contentSize.w, value );
-    } else if ( key == 'fullscreen' ) {
-      this.window.fullscreen = value;
-    } else if ( key == 'borderless' ) {
-      this.window.borderless = value;
-    } else {
-      throw new Error( 'Window does not have attribute ' + key );
+    const size = null
+
+    console.log('set window attribute', key, value)
+    switch (key) {
+      case 'title':
+        if (this.window.getTitle() !== value) {
+          this.window.setTitle(value)
+        }
+        break
+      case 'width':
+        size = this.window.getSize()
+        if (size.width !== value) {
+          this.window.setSize(value, size.height)
+        }
+        break
+      case 'height':
+        size = this.window.getSize()
+        if (size.height !== value) {
+          this.window.setSize(size.width, value)
+        }
+        break
+      case 'resizeable':
+        if (this.window.getResizeable() !== value) {
+          this.window.setResizeable(value)
+        }
+        break
     }
   }
 
   _setWindowHandler( event, handler ) {
-    if ( event == 'close' ) {
-      this.window.onClosing( handler );
-    } else if ( event == 'resize' ) {
-      this.window.onContentSizeChanged( () => {
-        handler( this.window.contentSize );
-      } );
-    } else if ( event == 'show' ) {
-      this.showHandler = handler;
-    } else {
-      throw new Error( 'Window does not have event ' + event );
+    switch (event) {
+      case 'close':
+        this.window.on('destroy', handler)
+        break
+      case 'delete':
+        this.window.on('delete-event', handler)
+        break
+      default:
+        throw new Error( 'Window does not have event ' + event )
     }
   }
 }

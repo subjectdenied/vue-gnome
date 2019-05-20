@@ -22,7 +22,7 @@ export class Element {
       throw new Error( 'Child node already has a parent' );
 
     if ( childNode instanceof TextNode && this.childNodes.length > 0 )
-      throw new Error( 'Element cannot contian multiple text nodes' );
+      throw new Error( 'Element cannot contain multiple text nodes' );
 
     childNode.parentNode = this;
 
@@ -103,10 +103,12 @@ export class Element {
   }
 
   setAttribute( key, value ) {
+    console.log('element setAttribute', key, value)
     this.attributes[ key ] = value;
   }
 
   addEventListener( event, handler ) {
+    console.log('element.addEventListener', event)
     this.handlers[ event ] = handler;
   }
 

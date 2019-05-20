@@ -13,10 +13,11 @@ export class Widget extends Element {
     super.appendChild( childNode );
 
     if ( this.widget != null ) {
-      if ( childNode instanceof Element )
+      if ( childNode instanceof Element ) {
         this._appendElement( childNode );
-      else if ( childNode instanceof TextNode )
+      } else if ( childNode instanceof TextNode ) {
         this._setWidgetText( childNode.text );
+      }
     }
   }
 
@@ -43,12 +44,15 @@ export class Widget extends Element {
   setAttribute( key, value ) {
     super.setAttribute( key, value );
 
+    console.log('widget.setAttribute')
     if ( this.widget != null )
+      console.log('will call _setWidgetAttribute', key, value)
       this._setWidgetAttribute( key, value );
   }
 
   addEventListener( event, handler ) {
-    super.addEventListener( event, handler );
+    console.log('widget.addEventListener', event)
+    super.addEventListener( event, handler);
 
     if ( this.widget != null )
       this._setWidgetHandler( event, handler );
@@ -62,6 +66,7 @@ export class Widget extends Element {
   }
 
   _mountWidget() {
+    console.log('mounting widget: ' + this.tagName )
     this._createWidget();
     this._initializeWidgetAttributes();
 
@@ -177,6 +182,7 @@ export class Widget extends Element {
   }
 
   _setWidgetAttribute( key, value ) {
+    console.log('widget._setWidgetAttribute')
     if ( key == 'visible' )
       this.widget.visible = value;
     else if ( key == 'enabled' )

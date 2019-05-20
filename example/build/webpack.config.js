@@ -32,7 +32,7 @@ module.exports =  {
     extensions: [ '.js', '.vue', '.json' ]
   },
   plugins: [
-    new webpack.ExternalsPlugin( 'commonjs', [ 'libui-node', { 'vuido': '../../dist/vuido.js' } ] ),
+    new webpack.ExternalsPlugin( 'commonjs', [ 'node-gtk', { 'vuido': '../../dist/vuido.js' } ] ),
     new VueLoaderPlugin()
   ],
   performance: {

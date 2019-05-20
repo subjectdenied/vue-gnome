@@ -8,7 +8,7 @@
     "url": "git+https://github.com/mimecorg/vuido.git"
   },
   "keywords": [
-    "libui",
+    "node-gtk",
     "node",
     "dom"
   ],

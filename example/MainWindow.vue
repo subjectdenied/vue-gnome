@@ -1,138 +1,73 @@
 <template>
-  <Window title="Vuido Demo" width="1000" height="480" margined v-on:show="show" v-on:close="exit">
-    <Box horizontal padded>
-      <Group stretchy title="Input Widgets" margined>
-        <Box padded>
-          <Box horizontal padded>
-            <TextInput stretchy v-model="text"/>
-            <TextInput stretchy v-model="text" readonly/>
-          </Box>
-          <Box stretchy horizontal padded>
-            <TextArea stretchy v-model="multilineText"/>
-            <TextArea stretchy v-model="multilineText" readonly/>
-          </Box>
-          <Box horizontal padded>
-            <DropdownList stretchy v-bind:items="items" v-model="dropdown"/>
-            <TextInput stretchy v-bind:value="items[ dropdown ]" readonly/>
-          </Box>
-          <Box horizontal padded>
-            <Combobox stretchy v-bind:items="items" v-model="combobox"/>
-            <TextInput stretchy v-bind:value="combobox" readonly/>
-          </Box>
-          <Box horizontal padded>
-            <Spinbox stretchy min="0" max="100" v-model="spinbox"/>
-            <TextInput stretchy v-bind:value="spinbox" readonly/>
-          </Box>
-          <Box horizontal padded>
-            <Slider stretchy min="0" max="100" v-model="slider"/>
-            <Slider stretchy min="0" max="100" v-model="slider" v-bind:enabled="false"/>
-          </Box>
-          <Box horizontal padded>
-            <ColorButton stretchy v-model="color"/>
-            <TextInput stretchy v-bind:value="colorString" readonly/>
-          </Box>
-          <Box horizontal padded>
-            <FontButton ref="fontButton" stretchy v-on:change="font = $event"/>
-            <TextInput stretchy v-bind:value="fontString" readonly/>
-          </Box>
-        </Box>
-      </Group>
-      <Group title="Miscellaneous" margined>
-        <Box padded>
-          <Box horizontal padded>
-            <Box stretchy horizontal padded>
-              <Checkbox v-model="enabled">Enabled</Checkbox>
-              <Checkbox v-model="visible">Visible</Checkbox>
-            </Box>
-            <Button stretchy v-bind:enabled="enabled" v-bind:visible="visible">Button</Button>
-          </Box>
-          <Separator horizontal/>
-          <Box horizontal padded>
-            <RadioButtons stretchy v-bind:items="[ 'Button', 'Text input', 'Text' ]" v-model="radio"/>
-            <Box stretchy>
-              <Button v-if="radio == 0">Button</Button>
-              <TextInput v-else-if="radio == 1" v-model="text"/>
-              <Text v-else>Text</Text>
-            </Box>
-          </Box>
-          <Separator horizontal/>
-          <Box horizontal padded>
-            <Button v-on:click="changeProgress( -10 )">Decrease</Button>
-            <Button v-on:click="changeProgress( 10 )">Increase</Button>
-            <Button v-on:click="progress = -1">Infinity</Button>
-          </Box>
-          <ProgressBar v-bind:value="progress"/>
-          <Separator horizontal/>
-          <Box horizontal padded>
-            <DatePicker/>
-            <Separator/>
-            <TimePicker/>
-            <Separator/>
-            <DateTimePicker/>
-          </Box>
-          <Separator horizontal/>
-          <Tab stretchy margined>
-            <Form label="Form" padded>
-              <TextInput label="First name:"/>
-              <TextInput label="Last name:"/>
-              <Spinbox label="Age:" min="1" max="99"/>
-            </Form>
-            <ExampleArea label="Area"/>
-            <Box label="Tab 3">
-              <Text>Sed ut perspiciatis unde omnis iste natus error sit voluptatem.</Text>
-            </Box>
-          </Tab>
-        </Box>
-      </Group>
+  <Window ref="window" :width="width" :height="height" @close="exit" :title="windowTitle">
+    <Box>
+      <Button
+        ref="b1"
+        label="+"
+        @click="click('plus')"
+      />
+      <Button
+        ref="b2"
+        label="-"
+        @click="click('minus')"
+      />
+      <Label>{{ counter }}</Label>
     </Box>
   </Window>
 </template>
 
 <script>
-import libui from 'libui-node'
-
-import ExampleArea from './ExampleArea'
-
 export default {
   components: {
-    ExampleArea
   },
   data() {
     return {
-      text: 'Text input',
-      multilineText: 'Text area',
-      items: [ 'Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5' ],
-      dropdown: 0,
-      combobox: 'Combobox',
-      spinbox: 30,
-      slider: 40,
-      color: new libui.Color( 0, 175 / 255, 130 / 255, 1 ),
-      font: null,
-      enabled: true,
-      visible: true,
-      radio: 0,
-      progress: 10
-    };
+      width: 1000,
+      height: 480,
+      windowTitle: 'Vue Gnome',
+      counter: 0
+    }
   },
   computed: {
-    colorString() {
-      return 'R: ' + Math.floor( this.color.r * 255 ) + ', G: ' + Math.floor( this.color.g * 255 ) + ', B: ' + Math.floor( this.color.b * 255 ) + ', A: ' + Math.floor( this.color.a * 255 );
-    },
-    fontString() {
-      if ( this.font != null )
-        return this.font.getFamily() + ' ' + this.font.getSize() + ', weight=' + this.font.getWeight() + ', italic=' + this.font.getItalic() + ', stretch=' + this.font.getStretch();
-    }
   },
   methods: {
-    show() {
-      this.font = this.$refs.fontButton.font;
+    show () {
+	    console.log('show')
     },
-    changeProgress( step ){
-      this.progress = Math.min( Math.max( 0, this.progress + step ), 100 );
-    },
-    exit() {
+    exit () {
       this.$exit();
+    },
+    click (op) {
+      console.log('before setting')
+
+      switch (op) {
+        case 'plus':
+          this.counter++
+          break
+        case 'minus':
+          this.counter--
+          break
+      }
+
+      console.log('after setting')
     }
+  },
+  watch: {
+    windowTitle (v) {
+      console.log('title changed')
+    }
+  },
+  created () {
+    console.log('created')
+  },
+  mounted () {
+    console.log('mounted')
+  },
+  beforeUpdate () {
+    console.log('before update')
+  },
+  updated () {
+    console.log('mainWindow was updated')
   }
 }
 </script>

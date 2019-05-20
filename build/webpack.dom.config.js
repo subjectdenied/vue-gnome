@@ -21,7 +21,7 @@ module.exports = {
       }
     ]
   },
-  externals: [ 'libui-node' ],
+  externals: [ 'node-gtk' ],
   plugins: [
     new webpack.BannerPlugin( {
       banner: 'libui-node-dom v' + VuidoVersion + '\nCopyright (C) 2018 Michał Męciński\nLicense: MIT'

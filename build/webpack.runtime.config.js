@@ -30,7 +30,7 @@ module.exports = {
       'weex': 'vue/src/platforms/weex'
     }
   },
-  externals: [ 'libui-node' ],
+  externals: [ 'node-gtk' ],
   plugins: [
     new webpack.DefinePlugin( {
       __WEEX__: false,
@@ -47,5 +47,5 @@ module.exports = {
     children: false,
     modules: false
   },
-  devtool: false
+  devtool: '#inline-source-map'
 };

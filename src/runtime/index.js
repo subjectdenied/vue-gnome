@@ -1,4 +1,5 @@
-import libui from 'libui-node'
+import Gtk from './gtk';
+import { gi } from './gtk'
 
 import Vue from 'core/instance/index'
 import { initGlobalAPI } from 'core/global-api/index'
@@ -47,20 +48,21 @@ Vue.prototype.$mount = function( el, hydrating ) {
   return this;
 };
 
-Vue.prototype.$libui = libui;
+Vue.prototype.$gtk = Gtk;
 
 Vue.prototype.$start = function() {
-  if ( mountedWindows.indexOf( this ) < 0 )
+  if ( mountedWindows.indexOf( this ) < 0 ) {
     this.$mount();
-
-  libui.startLoop();
+    // gi.startLoop();
+    // Gtk.init();
+  }
 };
 
 Vue.prototype.$exit = function() {
-  for ( let i = mountedWindows.length - 1; i >= 0; i-- )
+  for ( let i = mountedWindows.length - 1; i >= 0; i-- ) {
     mountedWindows[ i ].$destroy();
-
-  libui.stopLoop();
+  }
+  Gtk.mainQuit()
 };
 
 class DialogsHelper {

@@ -9,7 +9,7 @@ module.exports = {
   output: {
     path: path.resolve( __dirname, '../packages/vuido-template-compiler' ),
     filename: 'index.js',
-    libraryTarget: 'commonjs2'
+    libraryTarget: 'commonjs'
   },
   target: 'node',
   module: {

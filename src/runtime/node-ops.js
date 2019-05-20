@@ -50,6 +50,7 @@ export function setTextContent( node, text ) {
 }
 
 export function setAttribute( node, key, value ) {
+  console.log('node-ops', key, value)
   node.setAttribute( key, value );
 }
 

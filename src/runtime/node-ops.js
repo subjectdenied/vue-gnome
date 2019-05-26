@@ -1,6 +1,6 @@
 import { TextNode } from './nodes/textnode'
 import { Comment } from './nodes/comment'
-import * as elements from './elements'
+import * as elements from './Gtk3/elements'
 
 export function createElement( tagName, vnode ) {
   const element = elements[ tagName ];

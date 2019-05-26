@@ -1,22 +1,24 @@
 import { Element } from './element'
-import { TextNode } from '../nodes/textnode'
+import { TextNode } from '../../nodes/textnode'
+import Gtk from '../../gtk'
+import { gi } from '../../gtk'
 
 export class Widget extends Element {
-  constructor( tagName ) {
-    super( tagName );
+  constructor(tagName) {
+    super(tagName)
 
-    this.widget = null;
-    this.widgetIndex = null;
+    this.widget = null
+    this.widgetIndex = null
   }
 
-  appendChild( childNode ) {
-    super.appendChild( childNode );
+  appendChild(childNode) {
+    super.appendChild(childNode);
 
-    if ( this.widget != null ) {
-      if ( childNode instanceof Element ) {
-        this._appendElement( childNode );
-      } else if ( childNode instanceof TextNode ) {
-        this._setWidgetText( childNode.text );
+    if (this.widget != null) {
+      if (childNode instanceof Element) {
+        this._appendElement(childNode)
+      } else if (childNode instanceof TextNode) {
+        this._setWidgetText(childNode.text)
       }
     }
   }
@@ -43,15 +45,11 @@ export class Widget extends Element {
 
   setAttribute( key, value ) {
     super.setAttribute( key, value );
-
-    console.log('widget.setAttribute')
     if ( this.widget != null )
-      console.log('will call _setWidgetAttribute', key, value)
       this._setWidgetAttribute( key, value );
   }
 
   addEventListener( event, handler ) {
-    console.log('widget.addEventListener', event)
     super.addEventListener( event, handler);
 
     if ( this.widget != null )
@@ -66,7 +64,6 @@ export class Widget extends Element {
   }
 
   _mountWidget() {
-    console.log('mounting widget: ' + this.tagName )
     this._createWidget();
     this._initializeWidgetAttributes();
 
@@ -78,17 +75,17 @@ export class Widget extends Element {
       if ( childNode instanceof Element )
         this._appendElement( childNode );
       else if ( childNode instanceof TextNode )
-        this._setWidgetText( childNode.text );
+        this._setWidgetText( childNode.text )
     }
   }
 
   _getDefaultAttributes() {
     return {
-      visible: true,
-      enabled: true,
-      stretchy: false,
-      label: ''
-    };
+      packStart: null,
+      packEnd: null,
+      attach: null,
+      attachNextTo: null
+    }
   }
 
   _createWidget() {
@@ -97,7 +94,6 @@ export class Widget extends Element {
 
   _destroyWidget() {
     this.widget.destroy();
-
     this._clearWidget();
   }
 
@@ -116,8 +112,8 @@ export class Widget extends Element {
       throw new Error( this.tagName + ' cannot contain ' + childNode.tagName + ' elements' );
 
     childNode._mountWidget();
-    this._appendWidget( childNode );
-
+    console.log(this.tagName + ' => ' + childNode.tagName, childNode.widget)
+    this._appendWidget(childNode)
     this._reindexChildWidgets();
   }
 
@@ -158,11 +154,83 @@ export class Widget extends Element {
   }
 
   _appendWidget( childNode ) {
-    throw new Error( this.tagName + ' cannot contain child widgets' );
+    // throw new Error( this.tagName + ' cannot contain child widgets' );
+    let packed = false
+    if (typeof childNode.attributes.packStart !== 'undefined' ||
+    typeof childNode.attributes.packEnd !== 'undefined') {
+      packed = true
+
+      if (typeof childNode.attributes.packStart !== 'undefined') {
+        console.log(this.tagName + '.appendElement', childNode.attributes.packStart)
+        this._packStart(childNode)
+      }
+
+      if (typeof childNode.attributes.packEnd !== 'undefined') {
+        console.log(this.tagName + '.appendElement', childNode.attributes.packEnd)
+        this._packEnd(childNode)
+      }
+
+      this.widget.showAll()
+    }
+    return false
   }
 
   _removeWidget( childNode ) {
     throw new Error( this.tagName + ' cannot contain child widgets' );
+  }
+
+  findChild (widget, name) {
+    if (widget.widget.getName(name) == 0) {
+      return this
+    }
+
+    if (Gtk.isBin(widget.widget)) {
+      const child = Gtk.Bin.getChild(Gtk.Bin(widget.widget))
+      return this.findChild(child, name)
+    }
+
+    if (Gtk.isContainer(widget.widget)) {
+      const children = Gtk.getChildren(Gtk.Container(widget.widget))
+      while ((children = gi.listNext(children)) != NULL) {
+        const widget = this.findChild(children.data, name)
+        if (widget != null) {
+          return widget
+        }
+      }
+    }
+    return null
+  }
+
+  _packStart (childNode) {
+    const value = childNode.attributes.packStart
+    const child = childNode.widget
+    const expand = value[0]
+    const fill = value[1]
+    const padding = value[2]
+
+    if (typeof this.widget.packStart === 'function') {
+      this.widget.packStart(child, expand, fill, padding)
+      console.log(this.tagName + '->' + childNode.tagName + '::packStart', value)
+      child.show()
+    } else {
+      this.widget.packStart = value
+    }
+  }
+
+  _packEnd (childNode) {
+    const value = childNode.attributes.packEnd
+    const child = childNode.widget
+    const expand = value[0]
+    const fill = value[1]
+    const padding = value[2]
+
+    if (typeof this.widget.packEnd === 'function') {
+      this.widget.packEnd(child, expand, fill, padding)
+      console.log(this.tagName + '->' + childNode.tagName + '::packEnd', value)
+      child.show()
+    } else {
+      this.widget.packEnd = value
+    }
   }
 
   _setContentText( text ) {
@@ -175,20 +243,45 @@ export class Widget extends Element {
   }
 
   _initializeWidgetAttributes() {
-    if ( !this.attributes.visible )
-      this.widget.visible = false;
-    if ( !this.attributes.enabled )
-      this.widget.enabled = false;
+    const attributes = {
+      ...this._getDefaultAttributes(),
+      ...this.attributes
+    }
+
+    for (let key in attributes) {
+      this._setWidgetAttribute(key, attributes[key])
+    }
   }
 
   _setWidgetAttribute( key, value ) {
-    console.log('widget._setWidgetAttribute')
-    if ( key == 'visible' )
-      this.widget.visible = value;
-    else if ( key == 'enabled' )
-      this.widget.enabled = value;
-    else
-      throw new Error( this.tagName + ' does not have attribute ' + key );
+    switch (key) {
+      case 'packStart':
+      case 'packEnd':
+        if (value !== null) {
+          /*
+          console.log(key, value)
+          console.log(this.parentNode.widget)
+          console.log(typeof this.parentNode.widget[key])
+          if (Array.isArray(value) && value.length === 3) {
+            if (typeof this.parentNode.widget[key] === 'function') {
+              this.parentNode.widget[key](this.widget, ...value)
+            } else {
+              this.parentNode.widget[key] = [...value]
+            }
+          }
+          */
+            // this.parentNode.widget[key](this.widget, ...value)
+        }
+        break
+      case 'attach':
+        break
+      case 'attachNext':
+        break
+      default:
+        if (this.widget === null || typeof this.widget[key] === 'undefined') return
+        this.widget[key] = value
+        break
+    }
   }
 
   _setWidgetHandler( event, handler ) {

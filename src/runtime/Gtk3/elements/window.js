@@ -1,7 +1,8 @@
-import Gtk from '../gtk';
+import Gtk from '../../gtk';
 
 import { Element } from './element'
 import { Widget } from './widget';
+import { HeaderBar } from './headerbar'
 
 export class Window extends Element {
   constructor( tagName ) {
@@ -15,11 +16,15 @@ export class Window extends Element {
   appendChild( childNode ) {
     super.appendChild( childNode );
 
+    if (childNode instanceof HeaderBar) {
+      this.setAttribute('titlebar', childNode.widget)
+    }
+
     if ( !( childNode instanceof Widget ) )
       throw new Error( 'Window can only contain child widgets' );
 
     if ( this.childNodes.length > 1 )
-      throw new Error( 'Window can only contain one child element' );
+      // throw new Error( 'Window can only contain one child element' );
 
     if ( this.window != null )
       throw new Error( 'Window child element cannot be inserted dynamically' );
@@ -30,11 +35,16 @@ export class Window extends Element {
   }
 
   removeChild( childNode ) {
-    throw new Error( 'Window child element cannot be removed dynamically' );
+    super.removeChild( childNode );
+
+    if (childNode instanceof HeaderBar) {
+      this.setAttribute('titlebar', null)
+    } else {
+      throw new Error( 'Window child element cannot be removed dynamically' );
+    }
   }
 
   setAttribute( key, value ) {
-    console.log('window.setAttribute', key, value)
     super.setAttribute( key, value );
 
     if ( this.window != null )
@@ -57,25 +67,18 @@ export class Window extends Element {
 
   _getDefaultAttributes() {
     return {
-      width: 400,
-      height: 300,
+      width: null,
+      height: null,
       resizeable: true,
-      title: ''
-    /*
-      menu: false,
-      margined: false,
-      fullscreen: false,
-      borderless: false
-    */
-    };
+      title: null,
+      titlebar: null
+    }
   }
 
   _mountWindow() {
     this.window = new Gtk.Window({
       type : Gtk.WindowType.TOPLEVEL
     })
-
-    this.window.setDefaultSize(600, 400)
 
     if (this.attributes.title) {
       this.window.setTitle(this.attributes.title)
@@ -93,15 +96,21 @@ export class Window extends Element {
       this._setWindowHandler( key, this.handlers[ key ] );
 
     if ( this.childNodes.length > 0 ) {
-      this.childNodes[ 0 ]._mountWidget();
-      this.window.add( this.childNodes[ 0 ].widget );
+      for ( let i = 0; i < this.childNodes.length; i++ ) {
+        this.childNodes[i]._mountWidget()
+        if (this.childNodes[i] instanceof HeaderBar && i === 0) {
+          this._setWindowAttribute('titlebar', this.childNodes[i].widget)
+        } else {
+          this.window.add(this.childNodes[i].widget);
+        }
+      }
     }
 
     if ( this.showHandler != null )
       this.showHandler();
 
     this.window.showAll();
-    //this.window.show()
+    // this.window.show()
     Gtk.main()
   }
 
@@ -110,17 +119,24 @@ export class Window extends Element {
     this.window = null;
 
     for ( let i = 0; i < this.childNodes.length; i++ ) {
-      const childNode = this.childNodes[ i ];
-      if ( childNode instanceof Widget )
+      const childNode = this.childNodes[i];
+      if (childNode instanceof HeaderBar) {
+        this.window.setAttribute('titlebar', null)
+        childNode._clearWidget();
+      }
+      else if (childNode instanceof Widget)
         childNode._clearWidget();
     }
   }
 
   _setWindowAttribute( key, value ) {
     const size = null
-
-    console.log('set window attribute', key, value)
     switch (key) {
+      case 'titlebar':
+        if (this.window.getTitlebar() !== value) {
+          this.window.setTitlebar(value)
+        }
+        break
       case 'title':
         if (this.window.getTitle() !== value) {
           this.window.setTitle(value)

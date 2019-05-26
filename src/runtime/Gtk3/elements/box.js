@@ -1,12 +1,12 @@
 import { Widget } from './widget'
-import Gtk from '../gtk';
+import Gtk from '../../gtk';
 
 export class Box extends Widget {
   _getDefaultAttributes() {
     return {
-      ...super._getDefaultAttributes(),
-      horizontal: false,
-      padded: false
+      baselinePosition: Gtk.PositionType.CENTER,
+      homogeneous: false,
+      spacing: 0
     };
   }
 
@@ -16,11 +16,12 @@ export class Box extends Widget {
   }
 
   _appendWidget( childNode ) {
+    if (super._appendWidget(childNode)) return
     this.widget.add(childNode.widget);
   }
 
   _removeWidget( childNode ) {
-    this.widget.remove(childNode);
+    this.widget.remove(childNode.widget);
   }
 
   _initializeWidgetAttributes() {
@@ -28,12 +29,11 @@ export class Box extends Widget {
   }
 
   _setWidgetAttribute( key, value ) {
-    switch (key) {
-      case 'padded':
-        this.widget.padded = value
-        break
-      default:
-        super._setWidgetAttribute( key, value );
+    if (this.widget === null) return
+    if (typeof this.widget[key] !== 'undefined') {
+      this.widget[key] = value
+    } else {
+      super._setWidgetAttribute(key, value)
     }
   }
 }

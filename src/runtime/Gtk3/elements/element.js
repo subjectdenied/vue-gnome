@@ -1,4 +1,4 @@
-import { TextNode } from '../nodes/textnode'
+import { TextNode } from '../../nodes/textnode'
 
 export class Element {
   constructor( tagName ) {
@@ -103,12 +103,10 @@ export class Element {
   }
 
   setAttribute( key, value ) {
-    console.log('element setAttribute', key, value)
     this.attributes[ key ] = value;
   }
 
   addEventListener( event, handler ) {
-    console.log('element.addEventListener', event)
     this.handlers[ event ] = handler;
   }
 

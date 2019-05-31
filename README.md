@@ -1,38 +1,29 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mimecorg/vuido/master/docs/.gitbook/assets/vuido-logo-200.png" alt style="max-width:100%;">
+  <img src="" alt style="max-width:100%;">
 </p>
 
-<h1 align="center">Vuido</h1>
+<h1 align="center">Vue-Gnome</h1>
 
-<p align="center">Create native desktop applications for Windows, OS X and Linux using <a href="https://vuejs.org/">Vue.js</a>.</p>
+<p align="center">Create native Gnome linux desktop applications using Gtk3 and <a href="https://vuejs.org/">Vue.js</a>.</p>
 
 <p align="center">
-  <a href="https://npmjs.org/package/vuido"><img src="https://img.shields.io/npm/v/vuido.svg" alt="NPM module"></a>
-  <a href="https://github.com/mimecorg/vuido/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mimecorg/vuido.svg" alt="MIT License"></a>
+  <!--
+  <a href=""><img src="" alt="NPM module"></a>
+  <a href=""><img src="" alt="MIT License"></a>
+  -->
 </p>
 
 ## Introduction
 
-Vuido is a framework for creating native desktop applications based on Vue.js. Application using Vuido can run on Windows, OS X and Linux, using native GUI components, and don't require Electron.
-
-Under the hood, Vuido uses the [libui](https://github.com/andlabs/libui) library which provides native GUI components for each desktop platform, and the [libui-node](https://github.com/parro-it/libui-node) bindings for Node.js.
+Vue-Gnome is based on Vuido and allow to create linux desktop applications using Vue.js and Gtk3 (node-gtk). Applications using Vue-Gnome are using native GUI components, and don't require Electron. This is still very much alpha quality, with many basic widgets already working
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/mimecorg/vuido/master/docs/.gitbook/assets/vuido-demo.png" alt style="max-width:100%;">
 </p>
 
 ## Documentation
-
-You can find the full documentation of Vuido at [vuido.mimec.org](https://vuido.mimec.org/).
-
 ## Acknowledgements
 
-Vuido is largely based on Vue.js and shares most of its code, except for the platform specific code related to libui.
-
-Vuido was inspired by [Proton Native](https://github.com/kusti8/proton-native), an environment for creating native desktop applications using React.
+Vue-Gnome is largely based on Vuido, Vue.js and shares most of its code, except for the platform specific code related to libui, which was replaced with node-gtk Gtk bindings
 
 ## License
-
-Vuido is licensed under the MIT license
-
-Copyright (C) 2018 Michał Męciński

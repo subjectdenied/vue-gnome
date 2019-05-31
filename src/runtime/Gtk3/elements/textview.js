@@ -1,29 +1,28 @@
 import { Widget } from './widget'
 import Gtk from '../../gtk';
 
-export class ListBox extends Widget {
+export class TextView extends Widget {
   _getDefaultAttributes() {
     return {
     }
   }
 
   _createWidget() {
-    this.widget = new Gtk.ListBox()
+    this.widget = new Gtk.TextView()
     this.widget.show()
   }
 
   _appendWidget( childNode ) {
     if (super._appendWidget(childNode)) return
-    this.widget.add(childNode.widget)
-    this.widget.showAll()
+    this.widget.add(childNode.widget);
   }
 
   _removeWidget( childNode ) {
-    this.widget.remove(childNode.widget)
+    this.widget.remove(childNode.widget);
   }
 
   _initializeWidgetAttributes() {
-    super._initializeWidgetAttributes()
+    super._initializeWidgetAttributes();
   }
 
   _setWidgetAttribute( key, value ) {
@@ -32,18 +31,6 @@ export class ListBox extends Widget {
       this.widget[key] = value
     } else {
       super._setWidgetAttribute(key, value)
-    }
-  }
-
-  _setWidgetHandler( event, handler ) {
-    switch (event) {
-      case 'rowActivated':
-        this.widget.connect('row-activated', (v) =>
-          setImmediate(handler, this.childNodes.find(w => w.widget === v).widgetIndex)
-        )
-        break
-      default:
-        super._setWidgetHandler(event, handler)
     }
   }
 }

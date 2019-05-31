@@ -38,20 +38,18 @@ export class ComboBoxText extends Widget {
     this.widget.show()
   }
 
-  _appendWidget( childNode ) {
+  _appendWidget(childNode) {
     if (super._appendWidget(childNode)) return
-    this.widget.add(childNode.widget);
   }
 
-  _removeWidget( childNode ) {
-    this.widget.remove(childNode);
+  _removeWidget(childNode) {
+    this.widget.remove(childNode.widgetIndex)
   }
 
-  _setWidgetText( text ) {
-    this.widget.setText(text)
+  _setWidgetText(text) {
   }
 
-  _setWidgetAttribute( key, value ) {
+  _setWidgetAttribute(key, value) {
     console.log(key, value)
     if (this.widget === null) return
     switch (key) {
@@ -66,8 +64,8 @@ export class ComboBoxText extends Widget {
   _setWidgetHandler( event, handler ) {
     switch (event) {
       case 'change':
-        this.widget.connect('toggled', () =>
-          setImmediate(handler)
+        this.widget.connect('changed', () =>
+          setImmediate(handler, this.widget.getActiveId())
         )
         break
       default:

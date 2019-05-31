@@ -38,12 +38,41 @@
         </ListBoxRow>
         <ListBoxRow>
           <HBox spacing="50">
-            <Label :packStart="[true, true, 0]">Date Format</Label>
-            <ComboBoxText
-              ref="combo"
+            <Button
+              :packStart="[true, true, 0]"
+              label="add entry"
+              @click="addEntry"
+            />
+            <Button
               :packStart="[false, true, 0]"
+              label="remove entry"
+              @click="removeEntry"
             />
           </HBox>
+        </ListBoxRow>
+        <ListBoxRow>
+          <HBox spacing="50">
+            <Label :packStart="[true, true, 0]">Date Format</Label>
+            <ComboBoxText
+              :packStart="[false, true, 0]"
+              @change="comboBoxTextChanged"
+            >
+              <ComboBoxTextItem v-for="item in comboxTextItems"
+                :key="item.value"
+                :id="item.value"
+              >{{ item.label }}</ComboBoxTextItem>
+            </ComboBoxText>
+          </HBox>
+        </ListBoxRow>
+      </ListBox>
+      <ListBox
+        :packStart="[true, true, 0]"
+        @rowActivated="rowActivated"
+      >
+        <ListBoxRow v-for="item in items"
+          :key="item"
+        >
+          <Label>{{ item }}</Label>
         </ListBoxRow>
       </ListBox>
     </VBox>
@@ -57,9 +86,17 @@ export default {
   data: () => ({
     width: 1000,
     height: 480,
-    windowTitle: 'Box'
+    windowTitle: 'Box',
+    itemsString: 'This is a sorted ListBox Fail',
+    comboxTextItems: [
+      { label: '24 hours', value: '24hours' },
+      { label: 'AM/PM', value: 'am_pm' }
+    ]
   }),
   computed: {
+    items () {
+      return this.itemsString.split(' ')
+    }
   },
   methods: {
     exit () {
@@ -70,6 +107,22 @@ export default {
     },
     switched () {
       console.log('switch was changed')
+    },
+    comboBoxTextChanged (value) {
+      console.log(value)
+    },
+    rowActivated (index) {
+      console.log('row activated', index)
+      console.log(this.items[index])
+    },
+    addEntry () {
+      this.comboxTextItems.push({
+        label: 'another one',
+        value: 'some'
+      })
+    },
+    removeEntry () {
+      this.$delete(this.comboxTextItems, this.comboxTextItems.length - 1)
     }
   },
   watch: {
@@ -78,11 +131,6 @@ export default {
   },
   mounted () {
     console.log('mounted')
-    this.$nextTick(() => {
-      console.log('combo nexttick')
-      this.$refs.combo.widget.appendText('24-hours')
-      this.$refs.combo.widget.appendText('AM/PM')
-    })
   },
   beforeUpdate () {
   },

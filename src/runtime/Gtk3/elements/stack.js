@@ -2,22 +2,23 @@ import Gtk from '../../gtk';
 
 import { Widget } from './widget'
 
-export class FlowBox extends Widget {
+export class Stack extends Widget {
   _getDefaultAttributes() {
     return {
-      acceptUnpairedRelease: false,
-      activateOnSingleClick: true,
-      columnSpacing: 0,
-      homogeneous: false,
-      maxChildrenPerLine: 7,
-      minChildrenPerLine: 0,
-      rowSpacing: 0,
-      selectionMode: Gtk.SelectionMode.SINGLE
+      hhomogeneous: true,
+      homogeneous: true,
+      interpolateSize: false,
+      transitionDuration: 200,
+      transitionsRunning: false,
+      transitionType: Gtk.StackTransitionType.NONE,
+      vhomogeneous: true,
+      // visibleChild: null,
+      // visibleChildName: null
     }
   }
 
   _createWidget() {
-    this.widget = new Gtk.FlowBox()
+    this.widget = new Gtk.Stack()
     this.widget.show()
   }
 
@@ -26,9 +27,19 @@ export class FlowBox extends Widget {
     this.widget.show()
   }
 
+  _setWidgetText() {}
+
   _appendWidget( childNode ) {
     if (super._appendWidget(childNode)) return
-    this.widget.add(childNode.widget);
+
+    if (typeof childNode.attributes.forStack !== 'undefined') {
+      const name = childNode.attributes.forStack[0]
+      const title = childNode.attributes.forStack[1]
+      this.widget.addTitled(childNode.widget, name, title)
+    } else {
+      this.widget.add(childNode.widget);
+    }
+    this.widget.show()
   }
 
   _removeWidget( childNode ) {

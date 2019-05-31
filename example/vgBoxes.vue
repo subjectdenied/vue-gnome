@@ -1,17 +1,18 @@
 <template>
-  <Window ref="window"
+  <Window
     @close="exit"
+    :title="windowTitle"
   >
     <Box spacing="6">
       <Button
-        :packStart="[ true, true, 0]"
+        :packStart="[true, true, 0]"
         label="Hello"
-        @click="click('Hello')"
+        @click="button1Clicked"
       />
       <Button
-        :packStart="[ true, true, 0]"
+        :packStart="[true, true, 0]"
         label="Goodbye"
-        @click="click('Goodbye')"
+        @click="button2Clicked"
       />
     </Box>
   </Window>
@@ -22,9 +23,7 @@ export default {
   components: {
   },
   data: () => ({
-    width: 1000,
-    height: 480,
-    windowTitle: 'Box'
+    windowTitle: 'Hello World',
   }),
   computed: {
   },
@@ -32,15 +31,20 @@ export default {
     exit () {
       this.$exit();
     },
-    click (label) {
-      console.log(label)
+    button1Clicked () {
+      console.log('Hello')
+    },
+    button2Clicked () {
+      console.log('Goodbye')
     }
   },
   watch: {
   },
   created () {
+    console.log('created')
   },
   mounted () {
+    console.log('mounted')
   },
   beforeUpdate () {
   },

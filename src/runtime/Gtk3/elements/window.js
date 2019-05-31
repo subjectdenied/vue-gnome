@@ -67,10 +67,41 @@ export class Window extends Element {
 
   _getDefaultAttributes() {
     return {
+      acceptFocus: true,
+      // application: null,
+      // attachedTo: null,
+      decorated: true,
+      defaultHeight: -1,
+      defaultWidth: -1,
+      deletable: true,
+      destroyWithParent: false,
+      focusOnMap: true,
+      focusVisible: true,
+      // gravity: Gdk.GravityType.NORTH_WEST,
+      hasResizeGrip: false,
+      hasToplevelFocus: false,
+      hideTitlebarWhenMaximized: false,
+      // icon: null,
+      iconName: null,
+      isActive: false,
+      isMaximized: false,
+      mnemonicsVisible: true,
+      modal: false,
+      resizable: true,
+      resizableGripVisible: false,
+      role: null,
+      // screen: null,
+      skipPagerHint: false,
+      skipTaskbarHint: false,
+      startupId: null,
+      title: null,
+      // transientFor: null,
+      type: Gtk.WindowType.TOPLEVEL,
+      // typeHint: Gdk.WindowTypeHint.NORMAL,
+      urgencyHint: false,
+      windowPosition: Gtk.PositionType.NONE,
       width: null,
       height: null,
-      resizeable: true,
-      title: null,
       titlebar: null
     }
   }
@@ -130,7 +161,7 @@ export class Window extends Element {
   }
 
   _setWindowAttribute( key, value ) {
-    const size = null
+    let size = null
     switch (key) {
       case 'titlebar':
         if (this.window.getTitlebar() !== value) {
@@ -159,6 +190,8 @@ export class Window extends Element {
           this.window.setResizeable(value)
         }
         break
+      default:
+        this.window[key] = value
     }
   }
 

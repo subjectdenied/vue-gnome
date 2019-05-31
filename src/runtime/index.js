@@ -1,5 +1,5 @@
 import Gtk from './gtk';
-import { gi } from './gtk'
+import { Gio, Gdk, Cairo } from './gtk'
 
 import Vue from 'core/instance/index'
 import { initGlobalAPI } from 'core/global-api/index'
@@ -48,13 +48,13 @@ Vue.prototype.$mount = function( el, hydrating ) {
   return this;
 };
 
-Vue.prototype.$gtk = Gtk;
+Vue.prototype.$gtk = Gtk
+Vue.prototype.$gdk = Gdk
+Vue.prototype.$cairo = Cairo
 
 Vue.prototype.$start = function() {
   if ( mountedWindows.indexOf( this ) < 0 ) {
     this.$mount();
-    // gi.startLoop();
-    // Gtk.init();
   }
 };
 

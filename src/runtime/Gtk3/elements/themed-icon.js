@@ -1,23 +1,20 @@
-import Gtk from '../../gtk';
+import Gtk from '../../gtk'
+import { Gio } from '../../gtk'
 
 import { Widget } from './widget'
 
-export class FlowBox extends Widget {
+export class ThemedIcon extends Widget {
   _getDefaultAttributes() {
     return {
-      acceptUnpairedRelease: false,
-      activateOnSingleClick: true,
-      columnSpacing: 0,
-      homogeneous: false,
-      maxChildrenPerLine: 7,
-      minChildrenPerLine: 0,
-      rowSpacing: 0,
-      selectionMode: Gtk.SelectionMode.SINGLE
+      name: ''
     }
   }
 
   _createWidget() {
-    this.widget = new Gtk.FlowBox()
+    this.widget = Gio.ThemedIcon({
+      name: this.attributes.name
+    })
+
     this.widget.show()
   }
 
@@ -46,6 +43,14 @@ export class FlowBox extends Widget {
   }
 
   _setWidgetHandler( event, handler ) {
-    super._setWidgetHandler(event, handler)
+    switch (event) {
+      case 'click':
+        this.widget.connect('clicked', () =>
+          setImmediate(handler)
+        )
+        break
+      default:
+        super._setWidgetHandler(event, handler)
+    }
   }
 }

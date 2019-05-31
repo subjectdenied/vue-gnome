@@ -1,7 +1,7 @@
 import { Element } from './element'
 import { TextNode } from '../../nodes/textnode'
 import Gtk from '../../gtk'
-import { gi } from '../../gtk'
+import { Gio } from '../../gtk'
 
 export class Widget extends Element {
   constructor(tagName) {
@@ -84,7 +84,8 @@ export class Widget extends Element {
       packStart: null,
       packEnd: null,
       attach: null,
-      attachNextTo: null
+      attachNextTo: null,
+      forStack: null
     }
   }
 
@@ -169,9 +170,10 @@ export class Widget extends Element {
         console.log(this.tagName + '.appendElement', childNode.attributes.packEnd)
         this._packEnd(childNode)
       }
-
-      this.widget.showAll()
     }
+
+    this.widget.showAll()
+
     return false
   }
 
@@ -191,7 +193,7 @@ export class Widget extends Element {
 
     if (Gtk.isContainer(widget.widget)) {
       const children = Gtk.getChildren(Gtk.Container(widget.widget))
-      while ((children = gi.listNext(children)) != NULL) {
+      while ((children = Gio.listNext(children)) != NULL) {
         const widget = this.findChild(children.data, name)
         if (widget != null) {
           return widget
@@ -254,34 +256,8 @@ export class Widget extends Element {
   }
 
   _setWidgetAttribute( key, value ) {
-    switch (key) {
-      case 'packStart':
-      case 'packEnd':
-        if (value !== null) {
-          /*
-          console.log(key, value)
-          console.log(this.parentNode.widget)
-          console.log(typeof this.parentNode.widget[key])
-          if (Array.isArray(value) && value.length === 3) {
-            if (typeof this.parentNode.widget[key] === 'function') {
-              this.parentNode.widget[key](this.widget, ...value)
-            } else {
-              this.parentNode.widget[key] = [...value]
-            }
-          }
-          */
-            // this.parentNode.widget[key](this.widget, ...value)
-        }
-        break
-      case 'attach':
-        break
-      case 'attachNext':
-        break
-      default:
-        if (this.widget === null || typeof this.widget[key] === 'undefined') return
-        this.widget[key] = value
-        break
-    }
+    if (this.widget === null || typeof this.widget[key] === 'undefined') return
+    this.widget[key] = value
   }
 
   _setWidgetHandler( event, handler ) {

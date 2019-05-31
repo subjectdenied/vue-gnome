@@ -7,7 +7,6 @@ export class Element {
     this.nextSibling = null;
 
     this.tagName = tagName;
-
     this.childNodes = [];
 
     this.attributes = this._getDefaultAttributes();
@@ -115,10 +114,17 @@ export class Element {
   }
 
   _getDefaultAttributes() {
-    return {};
+    return {
+      borderWidth: 0
+    };
   }
 
   _setContentText( text ) {
     throw new Error( this.tagName + ' cannot contain text nodes' );
+  }
+
+  _getTopParent (tagName) {
+    if (this.tagName === tagName) return this
+    return this.parentNode._getTopParent(tagName)
   }
 }

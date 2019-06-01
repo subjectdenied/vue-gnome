@@ -1,17 +1,25 @@
 import Gtk from '../../gtk';
 
 import { Widget } from './widget'
+import { Button } from './button'
 
-export class Switch extends Widget {
+export class ToggleButton extends Button {
   _getDefaultAttributes() {
+    let parentAttributes = super._getDefaultAttributes()
+    delete parentAttributes.image
+
+    console.log(parentAttributes)
+
     return {
+      ...parentAttributes,
       active: false,
-      state: false
+      drawIndicator: true,
+      inconsistent: false
     }
   }
 
   _createWidget() {
-    this.widget = new Gtk.Switch()
+    this.widget = new Gtk.ToggleButton()
     this.widget.show()
   }
 
@@ -35,29 +43,27 @@ export class Switch extends Widget {
 
   _setWidgetAttribute( key, value ) {
     if (this.widget === null) return
-    switch (key) {
-      case 'text':
-        this.widget.setText(value)
-        break
-      default:
-        super._setWidgetAttribute(key, value)
+    if (typeof this.widget[key] !== 'undefined') {
+      console.log(this.tagName, key, value)
+      this.widget[key] = value
+    } else {
+      super._setWidgetAttribute(key, value)
     }
   }
 
   _setWidgetHandler( event, handler ) {
     switch (event) {
-      case 'activate':
-        this.widget.connect('notify::active', () => {
+      case 'toggled':
+        this.widget.connect('toggled', () => {
+          console.log(this.tagName, 'toggled')
           setImmediate(handler, this)
         })
         break
-      /*
-      case 'stateSet':
-        this.widget.connect('state-set', () =>
+      case 'clicked':
+        this.widget.connect('clicked', () => {
           setImmediate(handler, this)
-        )
+        })
         break
-      */
       default:
         super._setWidgetHandler(event, handler)
     }

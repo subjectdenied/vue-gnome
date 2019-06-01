@@ -12,7 +12,7 @@ export class Button extends Widget {
       relief: Gtk.ReliefStyle.NORMAL,
       useStock: false,
       xalign: 0.5,
-      valign: 0.5
+      yalign: 0.5
     }
   }
 
@@ -23,9 +23,7 @@ export class Button extends Widget {
 
   _initializeWidgetAttributes() {
     super._initializeWidgetAttributes();
-
     this._setWidgetAttribute('label', this.attributes.label)
-
     this.widget.show()
   }
 

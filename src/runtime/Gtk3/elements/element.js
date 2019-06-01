@@ -14,6 +14,7 @@ export class Element {
   }
 
   appendChild( childNode ) {
+    console.log(childNode.tagName, childNode instanceof TextNode)
     if ( childNode == null )
       throw new Error( 'Child node cannot be empty' );
 
@@ -21,7 +22,7 @@ export class Element {
       throw new Error( 'Child node already has a parent' );
 
     if ( childNode instanceof TextNode && this.childNodes.length > 0 )
-      throw new Error( 'Element cannot contain multiple text nodes' );
+      // throw new Error( 'Element cannot contain multiple text nodes' );
 
     childNode.parentNode = this;
 
@@ -126,5 +127,20 @@ export class Element {
   _getTopParent (tagName) {
     if (this.tagName === tagName) return this
     return this.parentNode._getTopParent(tagName)
+  }
+
+  _escapeHTML (html) {
+    return html.replace(/[&<"']/g, m => {
+      switch (m) {
+        case '&':
+          return '&amp;'
+        case '<':
+          return '&lt;'
+        case '"':
+          return '&quot;'
+        default:
+          return '&#039;'
+      }
+    })
   }
 }

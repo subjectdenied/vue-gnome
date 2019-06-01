@@ -13,10 +13,12 @@ function getGtk(version = '3.0') {
 }
 
 export default getGtk();
+export const GLib = nodeGtk.require('GLib')
 export const Gio = nodeGtk.require('Gio')
 export const Gdk = nodeGtk.require('Gdk')
 export const gi = nodeGtk
 export const Cairo = nodeGtk.require('cairo')
+export const Pango = nodeGtk.require('Pango')
 
 export const GObject = nodeGtk.require('GObject')
 export const TYPE_INVALID = GObject.TYPE_INVALID
@@ -40,7 +42,6 @@ export const TYPE_POINTER = GObject.typeFromName('gpointer')
 export const TYPE_BOXED = GObject.typeFromName('GBoxed')
 export const TYPE_PARAM = GObject.typeFromName('GParam')
 export const TYPE_OBJECT = GObject.typeFromName('GObject')
-export const TYPE_PYOBJECT = GObject.typeFromName('PyObject')
 export const TYPE_GTYPE = GObject.typeFromName('GType')
 export const TYPE_STRV = GObject.typeFromName('GStrv')
 export const TYPE_VARIANT = GObject.typeFromName('GVariant')

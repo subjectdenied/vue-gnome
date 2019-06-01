@@ -174,15 +174,15 @@ export class Window extends Element {
         }
         break
       case 'width':
-        size = this.window.getSize()
+        size = this.window.getSizeRequest()
         if (size.width !== value) {
-          this.window.setSize(value, size.height)
+          this.window.setSizeRequest(value, size.height)
         }
         break
       case 'height':
-        size = this.window.getSize()
+        size = this.window.getSizeRequest()
         if (size.height !== value) {
-          this.window.setSize(size.width, value)
+          this.window.setSizeRequest(size.width, value)
         }
         break
       case 'resizeable':

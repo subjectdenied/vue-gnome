@@ -30,4 +30,5 @@ export * from './radiobutton'
 export * from './linkbutton'
 export * from './spinbutton'
 export * from './progressbar'
+export * from './spinner'
 

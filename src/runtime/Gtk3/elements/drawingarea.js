@@ -1,3 +1,8 @@
+/*
+  TODO:
+  - pango context is empty when sent by node-gtk, bug?
+*/
+
 import Gtk from '../../gtk';
 
 import { Widget } from './widget'

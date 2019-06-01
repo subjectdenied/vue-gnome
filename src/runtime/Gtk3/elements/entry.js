@@ -96,6 +96,11 @@ export class Entry extends Widget {
 
   _setWidgetHandler( event, handler ) {
     switch (event) {
+      case 'input':
+        this.widget.connect('notify::text', () =>
+          setImmediate(handler, this)
+        )
+        break
       case 'activate':
         this.widget.connect('activate', () =>
           setImmediate(handler, this)

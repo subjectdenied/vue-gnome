@@ -16,8 +16,10 @@ import vgLinkButton from './vgLinkButton'
 import vgSpinButton from './vgSpinButton'
 import vgSwitch from './vgSwitch'
 import vgProgressBar from './vgProgressBar'
+import vgSpinner from './vgSpinner'
+import vgSpinnerExtended from './vgSpinnerExtended'
 
-const example = vgProgressBar
+const example = vgSpinnerExtended
 
 const window = new Vue({
   render(h) {

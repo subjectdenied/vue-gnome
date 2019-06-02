@@ -19,7 +19,7 @@ import vgProgressBar from './vgProgressBar'
 import vgSpinner from './vgSpinner'
 import vgSpinnerExtended from './vgSpinnerExtended'
 
-const example = vgSpinnerExtended
+const example = vgProgressBar
 
 const window = new Vue({
   render(h) {

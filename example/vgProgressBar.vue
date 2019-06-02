@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     exit () {
-      clearInterVal(this.interval)
+      clearInterval(this.interval)
       this.$exit();
     },
     textToggled (node) {
@@ -77,17 +77,12 @@ export default {
     },
     onTimeout () {
       console.log('timeout called')
-      try {
-        if (this.activityMode) {
-          this.$refs.progressBar.widget.pulse()
-        } else {
-          const value = this.$refs.progressBar.widget.getFraction() + 0.1
-          if (value > 1.0) value = 0.0
-          this.$refs.progressBar.widget.setFraction(value)
-        }
-      } catch (e) {
-        console.log('ERROR in interval function')
-        this.$refs.progressBar.widget.setFraction(0)
+      if (this.activityMode) {
+        this.$refs.progressBar.widget.pulse()
+      } else {
+        let value = this.$refs.progressBar.widget.getFraction() + 0.1
+        if (value > 1.0) value = 0.0
+        this.$refs.progressBar.widget.setFraction(value)
       }
     }
   },

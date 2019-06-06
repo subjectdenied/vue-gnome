@@ -12,15 +12,16 @@ function getGtk(version = '3.0') {
   return Gtk;
 }
 
-export default getGtk();
+export default getGtk()
+export const Gtk = getGtk()
 export const GLib = nodeGtk.require('GLib')
 export const Gio = nodeGtk.require('Gio')
 export const Gdk = nodeGtk.require('Gdk')
 export const gi = nodeGtk
 export const Cairo = nodeGtk.require('cairo')
 export const Pango = nodeGtk.require('Pango')
-
 export const GObject = nodeGtk.require('GObject')
+
 export const TYPE_INVALID = GObject.TYPE_INVALID
 export const TYPE_NONE = GObject.typeFromName('void')
 export const TYPE_INTERFACE = GObject.typeFromName('GInterface')
@@ -47,15 +48,57 @@ export const TYPE_STRV = GObject.typeFromName('GStrv')
 export const TYPE_VARIANT = GObject.typeFromName('GVariant')
 export const TYPE_UNICHAR = TYPE_UINT
 
-export const TYPE = {
-  'string': TYPE_STRING,
-  'number': TYPE_FLOAT
+export const G_TYPE = {
+  string: TYPE_STRING,
+  number: TYPE_INT,
+  float: TYPE_FLOAT
 }
 
-export const TYPE_FN = {
-  'string': 'setString',
-  'number': 'setFloat'
+export const G_TYPE_FN = {
+  get: {
+    string: 'getString',
+    number: 'getInt',
+    float: 'getFloat'
+  },
+  set: {
+    string: 'setString',
+    number: 'setInt',
+    float: 'setFloat'
+  }
 }
 
-export const getType = item => TYPE[typeof item]
-export const getTypeFn = item => TYPE_FN[typeof item]
+function isInt(n){
+  return Number(n) === n && n % 1 === 0;
+}
+
+function isFloat(n){
+  return Number(n) === n && n % 1 !== 0;
+}
+
+function getGType(n) {
+  let retVal = null
+  const type = typeof item
+  switch (type) {
+    case 'string':
+      return 'string'
+      break
+    case 'number':
+      if (isFloat(n)) {
+        retVal = 'float'
+      } else if (isInt(n)) {
+        retVal = 'number'
+      } else {
+        retVal = 'string'
+      }
+      break
+    default:
+      retVal = 'string'
+  }
+
+  return retVal
+}
+
+export const setType = item => G_TYPE[getGType(item)]
+export const setTypeFn = item => G_TYPE_FN.set[getGType(item)]
+export const getType = item => G_TYPE[getGType(item)]
+export const getTypeFn = item => G_TYPE_FN.get[getGType(item)]

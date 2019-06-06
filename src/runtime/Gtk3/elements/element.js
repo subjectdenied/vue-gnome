@@ -82,7 +82,7 @@ export class Element {
       throw new Error( 'Child node cannot be empty' );
 
     if ( childNode.parentNode != this )
-      throw new Error( 'Child node has invalid parent' );
+      // throw new Error( 'Child node has invalid parent' );
 
     if ( childNode instanceof TextNode )
       throw new Error( 'Text node cannot be removed dynamically' );
@@ -103,6 +103,7 @@ export class Element {
   }
 
   setAttribute( key, value ) {
+    console.log('set Attribute', key, value)
     this.attributes[ key ] = value;
   }
 

@@ -4,9 +4,10 @@ import Gtk from '../../gtk'
 import { Gio } from '../../gtk'
 
 export class Widget extends Element {
-  constructor(tagName) {
+  constructor(tagName, hasWidget = true) {
     super(tagName)
 
+    this.hasWidget = hasWidget
     this.widget = null
     this.widgetIndex = null
   }
@@ -172,7 +173,9 @@ export class Widget extends Element {
       }
     }
 
-    this.widget.showAll()
+    if (typeof this.widget.showAll !== 'undefined') {
+      this.widget.showAll()
+    }
 
     return false
   }
@@ -206,14 +209,16 @@ export class Widget extends Element {
   _packStart (childNode) {
     const value = childNode.attributes.packStart
     const child = childNode.widget
-    const expand = value[0]
-    const fill = value[1]
-    const padding = value[2]
+    const expand = value[0] || false
+    const fill = value[1] || false
+    const padding = value[2] || 0
 
     if (typeof this.widget.packStart === 'function') {
       this.widget.packStart(child, expand, fill, padding)
       console.log(this.tagName + '->' + childNode.tagName + '::packStart', value)
-      child.show()
+      if (typeof child.show !== 'undefined') {
+        child.show()
+      }
     } else {
       this.widget.packStart = value
     }
@@ -267,9 +272,16 @@ export class Widget extends Element {
   _reindexChildWidgets() {
     let index = 0;
     for ( let i = 0; i < this.childNodes.length; i++ ) {
-      const childNode = this.childNodes[ i ];
-      if ( childNode instanceof Widget )
-        childNode.widgetIndex = index++;
+      const childNode = this.childNodes[i]
+      if (childNode instanceof Widget) {
+        childNode.widgetIndex = index++
+      }
     }
+  }
+
+  _getParentWidget () {
+    return this.parentNode.hasWidget
+      ? this.parentNode
+      : this.parentNode.__getParentWidget()
   }
 }

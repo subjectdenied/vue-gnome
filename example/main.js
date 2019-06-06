@@ -18,8 +18,9 @@ import vgSwitch from './vgSwitch'
 import vgProgressBar from './vgProgressBar'
 import vgSpinner from './vgSpinner'
 import vgSpinnerExtended from './vgSpinnerExtended'
+import vgTreeView from './vgTreeView'
 
-const example = vgProgressBar
+const example = vgTreeView
 
 const window = new Vue({
   render(h) {

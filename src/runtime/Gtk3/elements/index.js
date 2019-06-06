@@ -31,4 +31,7 @@ export * from './linkbutton'
 export * from './spinbutton'
 export * from './progressbar'
 export * from './spinner'
+export * from './treeview'
+export * from './treeview-colum'
+export * from './cellrenderer-text'
 

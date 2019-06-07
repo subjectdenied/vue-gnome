@@ -4,7 +4,6 @@ import Gtk from '../../gtk';
 export class TreeViewColumn extends Widget {
   constructor(tagName, hasWidget = true) {
     super(tagName, hasWidget)
-    this.store = null
   }
 
   _getDefaultAttributes() {
@@ -27,7 +26,10 @@ export class TreeViewColumn extends Widget {
       visible: true,
       // widget: GtkWidget (put into header col)
       width: 0,
-      xOffset: 0
+      xOffset: 0,
+
+      // custom
+      column: {}
     }
   }
 
@@ -36,42 +38,59 @@ export class TreeViewColumn extends Widget {
     // this.widget.show()
   }
 
-  _appendWidget( childNode ) {
+  _appendWidget(childNode) {
     if (super._appendWidget(childNode)) return
 
-    childNode.store = this.store
-
-    let attribute = null
+    let attribute
     switch (childNode.tagName) {
       case 'CellRendererText':
-          attribute = 'text'
+        attribute = 'text'
+        break
+      case 'CellRendererToggle':
+        attribute = 'active'
+        break
+      case 'CellRendererPixbuf':
+        // import to not set this camelCase,
+        // but exactly as in doc
+        attribute = 'icon-name'
         break
       default:
-          attribute = 'text'
+        attribute = 'text'
     }
 
-    const index = this.widgetIndex || 0
-    console.log('column-index', index)
-
-    if (index === 0) {
-      this._setWidgetAttribute('visible', false)
-    }
-
-    console.log('adding cellrendererrtext', childNode.attributes.pos)
     this.widget.addAttribute(childNode.widget, attribute, childNode.attributes.pos)
   }
 
-  _removeWidget( childNode ) {
+  _removeWidget(childNode) {
     this.widget.remove(childNode.widget)
   }
 
   _initializeWidgetAttributes() {
+    const index = this.widgetIndex || 0
+    // get column defintion from parent
+    console.log(this.parentNode.attributes.columns)
+    this.attributes.column = this.parentNode.attributes.columns[index]
+
     super._initializeWidgetAttributes()
+
+    // hide first column used for identifier
+    if (index === 0) {
+      this.setAttribute('visible', false)
+    }
   }
 
-  _setWidgetAttribute( key, value ) {
+  _setWidgetAttribute(key, value) {
+    if (key === 'column') {
+      console.log(this.tagName, this.widgetIndex, value)
+      if (typeof value !== 'undefined') {
+        if (typeof value.sortable !== 'undefined' && value.sortable) {
+          this.setAttribute('sortColumnId', this.widgetIndex)
+          return
+        }
+      }
+    }
+
     if (this.widget === null) return
-    console.log(this.tagName, key, value)
     if (typeof this.widget[key] !== 'undefined') {
       this.widget[key] = value
     } else {

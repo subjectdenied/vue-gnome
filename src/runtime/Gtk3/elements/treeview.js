@@ -1,3 +1,13 @@
+/*
+  TODO:
+    - figure out why there is a memleak
+    - custom sort
+    - filtering
+    - update single cell
+    - more declarative approach
+      - crud methods instead rerendering whole list
+*/
+
 import Gtk, { G_TYPE, G_TYPE_FN, GObject } from '../../gtk'
 import { Widget } from './widget'
 
@@ -41,7 +51,7 @@ export class TreeView extends Widget {
       columns:
           [
             {
-              type: GTYPE,
+              type: G_TYPE,
               name: 'desc',
 
               // label for header
@@ -67,25 +77,6 @@ export class TreeView extends Widget {
             ...
           ]
       */
-
-      /*
-      columns: [
-        {
-          type: 'string',
-          label: 'testheader',
-          field: 'test'
-        }
-      ],
-      // holds json data
-      data: [
-        {
-          test: 'value 1'
-        },
-        {
-          test: 'value 2'
-        }
-      ]
-      */
     }
   }
 
@@ -103,7 +94,6 @@ export class TreeView extends Widget {
   _appendWidget(childNode) {
     if (super._appendWidget(childNode)) return
     this.widget.appendColumn(childNode.widget);
-    childNode.store = this.store
   }
 
   _removeWidget(childNode) {
@@ -118,20 +108,28 @@ export class TreeView extends Widget {
     if (this.widget === null) return
 
     switch (key) {
+      case 'columns':
+          const types = this.attributes.columns.map(col => {
+            return G_TYPE[col.type]
+          })
+
+          this.store.setColumnTypes(types)
+          console.log('columns changed')
+        break
       case 'data':
         if (value === null || this.store === null) return
         this._setupStore(this.attributes.columns, value)
         break
       case 'model':
         if (value === null || this.store === null) return
-        if (this.widget.model) {
-          this.widget.model.clear()
-        }
+        if (this.attributes.model !== null) return
+        console.log('model', this.attributes.model)
         this.widget.model = value
+        this.attributes.model = value
+        console.log('model changed')
         break
       default:
         if (typeof this.widget[key] !== 'undefined') {
-          console.log(this.tagName, key, value)
           this.widget[key] = value
         } else {
           super._setWidgetAttribute(key, value)
@@ -142,27 +140,11 @@ export class TreeView extends Widget {
   // TODO implement signals
 
   _setupStore(columns, data) {
-    /*
-    this.store = this.widget.getModel()
-    if (this.store !== null) {
-      this.store.clear()
-    } else {
-      this.store = new Gtk.ListStore()
-    }
-    */
     if (this.store) {
+      // clear store and fill it with new data (for now)
+      // later diff the data and use crud methods
       this.store.clear()
-      delete this.store
-      this.store = null
     }
-
-    this.store = new Gtk.ListStore()
-
-    const types = this.attributes.columns.map(col => {
-      return G_TYPE[col.type]
-    })
-
-    this.store.setColumnTypes(types)
 
     data.forEach(row => {
       const iter = this.store.append()
@@ -173,35 +155,37 @@ export class TreeView extends Widget {
         const colType = columns.find(col => col.field === key).type
         const type = G_TYPE[colType]
         const typeFn = G_TYPE_FN.set[colType]
-        const value = new GObject.Value()
+        let value = new GObject.Value()
         value.init(type)
         value[typeFn](item)
         this.store.setValue(iter, i, value)
         i++
+        value = null
       }
     })
-
-    console.log(this.store)
     this._setWidgetAttribute('model', this.store)
   }
 
   _setWidgetHandler(event, handler) {
-    console.log(this.tagName, 'toggled')
-
     switch (event) {
       case 'cellActivated':
         this.widget.connect('row-activated', (path, col) => {
           let [isIter, iter] = this.widget.model.getIter(path)
-          if (!isIter) return
+          if (!isIter) {
+            iter = null
+            return
+          }
           const node = this.childNodes.find(n => n.widget === col)
           this.currentCol = node.widgetIndex
 
           // get index
-          const index = this.store.getValue(iter, 0)
-          const rowIndex = parseInt(index[G_TYPE_FN.get['number']]())
+          let index = this.store.getValue(iter, 0)
+          let rowIndex = parseInt(index[G_TYPE_FN.get['number']]())
           const rowData = this._getCellByColAndRow(node.widgetIndex, rowIndex)
           const key = rowData.key
           const value = rowData.value
+          index = null
+          iter = null
 
           /*
           // get value
@@ -212,7 +196,7 @@ export class TreeView extends Widget {
           */
 
           setImmediate(handler, this, {
-            iter,
+            // iter,
             row: rowIndex,
             col: node.widgetIndex
           }, {
@@ -318,8 +302,6 @@ export class TreeView extends Widget {
   }
 
   _getCellByColAndRow (colIndex, rowIndex) {
-    console.log('current position: ', colIndex, rowIndex)
-
     let y=0
     let x=0
     for (let row in this.attributes.data) {

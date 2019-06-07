@@ -53,18 +53,20 @@
         <CellRendererText v-else-if="column.field === 'author'"
           :packStart="true"
           :pos="colIndex"
-        />
-        <!--
-        <CellRendererText v-else-if="column.field === 'price'"
-          :foreground="setRandomColor()"
+          foreground="white"
           :foregroundSet="true"
-          :background="setRandomColor()"
+          background="blue"
           :backgroundSet="true"
+        />
+        <CellRendererText v-else-if="column.field === 'price'"
           :packStart="true"
           :pos="colIndex"
         />
-        -->
-        <CellRendererText v-else-if="column.field === 'price'"
+        <CellRendererToggle v-else-if="column.field === 'active'"
+          :packStart="true"
+          :pos="colIndex"
+        />
+        <CellRendererPixbuf v-else-if="column.field === 'icon'"
           :packStart="true"
           :pos="colIndex"
         />
@@ -83,12 +85,13 @@ export default {
       {
         type: 'number',
         label: 'index',
-        field: 'index'
+        field: 'index',
       },
       {
         type: 'string',
         label: 'Title & Author',
-        field: 'title'
+        field: 'title',
+        sortable: true
       },
       {
         type: 'string',
@@ -98,7 +101,19 @@ export default {
       {
         type: 'float',
         label: 'Price',
-        field: 'price'
+        field: 'price',
+        sortable: true
+      },
+      {
+        type: 'number',
+        label: 'Active',
+        field: 'active',
+        sortable: false
+      },
+      {
+        type: 'string',
+        label: 'Icon',
+        field: 'icon',
       }
     ],
     data: []
@@ -109,36 +124,26 @@ export default {
     exit () {
       this.$exit();
     },
-    click (label) {
-      console.log(label)
-    },
-    setRandomColor () {
-      const colors = [ 'red', 'green', 'blue']
-      const color = colors[Math.floor(Math.random() * colors.length)]
-      console.log('color', color)
-      return color
-    },
     cellActivated (node, storeData, cellData) {
       console.log('cell', storeData, cellData)
     },
     setInitialData () {
       let data = []
-
       for (let i=0; i < 10; i++) {
         const row = this.addRow(i)
         data.push(row)
       }
-
-      console.log(data)
       this.data = data
     },
     addRow (i = false) {
-      i = i ? i : (this.data.length - 1 >= 0 ? this.data.length : 0)
+      i = i || (this.data.length - 1 >= 0 ? this.data.length : 0)
       const row = {
         index: i,
         title: 'item ' + i,
         author: 'author ' + i,
-        price: parseFloat(i + 1)
+        price: parseFloat(i + 1),
+        active: parseInt(Math.round(Math.random())),
+        icon: 'edit-cut'
       }
       return row
     },

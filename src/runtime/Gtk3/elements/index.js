@@ -34,4 +34,6 @@ export * from './spinner'
 export * from './treeview'
 export * from './treeview-colum'
 export * from './cellrenderer-text'
+export * from './cellrenderer-toggle'
+export * from './cellrenderer-pixbuf'
 

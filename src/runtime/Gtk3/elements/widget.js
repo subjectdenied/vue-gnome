@@ -68,15 +68,21 @@ export class Widget extends Element {
     this._createWidget();
     this._initializeWidgetAttributes();
 
-    for ( let key in this.handlers )
-      this._setWidgetHandler( key, this.handlers[ key ] );
+    for (let key in this.handlers) {
+      this._setWidgetHandler( key, this.handlers[key])
+    }
 
-    for ( let i = 0; i < this.childNodes.length; i++ ) {
-      const childNode = this.childNodes[ i ];
-      if ( childNode instanceof Element )
-        this._appendElement( childNode );
-      else if ( childNode instanceof TextNode )
-        this._setWidgetText( childNode.text )
+    for (let i=0; i<this.childNodes.length; i++) {
+      let childNode = this.childNodes[i]
+      // TODO: check if this creates issues
+      childNode.parentNode = this
+      //
+      if (childNode instanceof Element) {
+        this._appendElement( childNode)
+      }
+      else if (childNode instanceof TextNode) {
+        this._setWidgetText(childNode.text)
+      }
     }
   }
 
@@ -114,7 +120,6 @@ export class Widget extends Element {
       throw new Error( this.tagName + ' cannot contain ' + childNode.tagName + ' elements' );
 
     childNode._mountWidget();
-    console.log(this.tagName + ' => ' + childNode.tagName, childNode.widget)
     this._appendWidget(childNode)
     this._reindexChildWidgets();
   }
@@ -163,12 +168,10 @@ export class Widget extends Element {
       packed = true
 
       if (typeof childNode.attributes.packStart !== 'undefined') {
-        console.log(this.tagName + '.appendElement', childNode.attributes.packStart)
         this._packStart(childNode)
       }
 
       if (typeof childNode.attributes.packEnd !== 'undefined') {
-        console.log(this.tagName + '.appendElement', childNode.attributes.packEnd)
         this._packEnd(childNode)
       }
     }
@@ -215,7 +218,6 @@ export class Widget extends Element {
 
     if (typeof this.widget.packStart === 'function') {
       this.widget.packStart(child, expand, fill, padding)
-      console.log(this.tagName + '->' + childNode.tagName + '::packStart', value)
       if (typeof child.show !== 'undefined') {
         child.show()
       }
@@ -233,7 +235,6 @@ export class Widget extends Element {
 
     if (typeof this.widget.packEnd === 'function') {
       this.widget.packEnd(child, expand, fill, padding)
-      console.log(this.tagName + '->' + childNode.tagName + '::packEnd', value)
       child.show()
     } else {
       this.widget.packEnd = value

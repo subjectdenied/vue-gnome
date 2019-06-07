@@ -103,7 +103,6 @@ export class Element {
   }
 
   setAttribute( key, value ) {
-    console.log('set Attribute', key, value)
     this.attributes[ key ] = value;
   }
 

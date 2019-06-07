@@ -4,7 +4,6 @@ import Gtk, { Pango, Gdk } from '../../gtk';
 export class CellRendererText extends Widget {
   constructor(tagName, hasWidget = true) {
     super(tagName, hasWidget)
-    this.store = null
   }
 
   _getDefaultAttributes() {
@@ -57,24 +56,8 @@ export class CellRendererText extends Widget {
       wrapMode: Pango.WrapMode.CHAR,
       wrapWidth: -1,
 
+      // custom
       pos: 0
-      /* CellRenderer props
-
-      cellBackground: null,
-      // cellBackgroundRgba: GdkRGBA,
-      editing: false,
-      height: -1,
-      isExpanded: false,
-      isExpander: false,
-      mode: Gtk.CellRenderMode.INERT,
-      sensitive: true,
-      visible: true,
-      width: -1,
-      xalign: 0.5,
-      xpad: 0,
-      yalign: 0.5,
-      ypad: 0
-      */
     }
   }
 
@@ -98,7 +81,6 @@ export class CellRendererText extends Widget {
 
   _setWidgetAttribute( key, value ) {
     if (this.widget === null) return
-    console.log(this.tagName, key, value)
     if (typeof this.widget[key] !== 'undefined') {
       switch (key) {
         case 'foreground':
@@ -127,7 +109,6 @@ export class CellRendererText extends Widget {
     switch (event) {
       case 'edited':
         this.widget.connect('edited', () => {
-          console.log(this.tagName, 'edited')
           setImmediate(handler, this)
         })
         break
